@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Arduino com AJAX</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	</head>
+
+<body>
+
+
+
+<script type="text/javascript">
+
+//var url = 'http://192.168.1.100:3000';
+var url = '127.0.0.1';
+
+
+$(document).ready(function(){
+
+	// Faz a primeira requisição quando a página é carregada
+	fazerRequisicao(); 
+	function fazerRequisicao(){
+		
+    	$.ajax({
+		    url: url,
+		    data: { '': ''}, // usaremos em proximas versões
+		    dataType: 'jsonp', // IMPORTANTE
+		    crossDomain: true, // IMPORTANTE
+		    jsonp: false,
+		    jsonpCallback: 'dados', // IMPORTANTE
+		    success: function(data,status,xhr) {
+				
+			//	$('#acao').text(data.acao);
+			//	$('#ip').text(data.ip);
+				console.log(data);
+		    }
+		  });
+        return false;
+    }
+
+    // A cada 1000 (1 segundo), faça uma nova requisição.
+    setInterval(fazerRequisicao, 1000);
+  	// Acredito que 3000 (3 segundos) ou mais seja o ideal.
+ 	
+});
+
+</script>
+</body>
+</html>

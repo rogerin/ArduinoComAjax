@@ -4,6 +4,8 @@
  * Data: 24/02/2014
  * Versão: v0.1
  * Descrição: O Arduino recebe uma requisição HTTP e retorna um JSON que é tratado no HTML com Javascript para exibir na tela.
+ * Github: https://github.com/rogerin/ArduinoComAjax
+ * Twitter: https://twitter.com/rogerin
  */
 
 
@@ -51,6 +53,7 @@ void loop()
         if(c == '\n' && continua)
         {
           client.println("HTTP/1.1 200 OK");
+          // IMPORTANTE, ISSO FAZ O ARDUINO RECEBER REQUISIÇÃO AJAX DE OUTRO SERVIDOR E NÃO APENAS LOCAL.
           client.println("Content-Type: text/javascript");
           client.println("Access-Control-Allow-Origin: *");
           client.println();
