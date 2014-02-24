@@ -9,7 +9,25 @@
 
 <body>
 
+<div>
+	<h1>Arduino com AJAX</h1>
+	<p>
+		Lendo dois sensores no arduino. confira o codigo no github: <a href="https://github.com/rogerin/ArduinoComAjax">rogerin</a> <br/>
+		Projeto sem uma boa interface grafica, pois não é o foco dessa demonstração.
+	</p>
+	<p>
+		Status: <span id="status">...</span>
+	</p>
+	<p>
+		<h2>Sensor 1</h2>
+		Valor: <strong><span id="sensor1"></span></strong>
+	</p>
+	<p>
+		<h2>Sensor 2</h2>
+		Valor: <strong><span id="sensor2"></span></strong>
+	</p>
 
+</div>
 
 <script type="text/javascript">
 
@@ -22,7 +40,7 @@ $(document).ready(function(){
 	// Faz a primeira requisição quando a página é carregada
 	fazerRequisicao(); 
 	function fazerRequisicao(){
-		
+		$('#status').text("Enviando Requisição...");
     	$.ajax({
 		    url: url,
 		    data: { '': ''}, // usaremos em proximas versões
@@ -31,9 +49,9 @@ $(document).ready(function(){
 		    jsonp: false,
 		    jsonpCallback: 'dados', // IMPORTANTE
 		    success: function(data,status,xhr) {
-				
-			//	$('#acao').text(data.acao);
-			//	$('#ip').text(data.ip);
+				$('#status').text("Requisição Recebida!");
+				$('#sensor1').text(data.sensor1);
+				$('#sensor2').text(data.sensor2);
 				console.log(data);
 		    }
 		  });
