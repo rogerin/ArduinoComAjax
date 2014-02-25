@@ -14,11 +14,11 @@
 
 byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 
-IPAddress ip(192,168,1,123);
-IPAddress gateway(192,168,1,100);
+IPAddress ip(192,168,1,100);
+IPAddress gateway(192,168,1,1);
 IPAddress subnet(255,255,255,0);
 
-EthernetServer server(3000);
+EthernetServer server(1000);
 
 const int analogPin1 = A0;
 const int analogPin2 = A1;
@@ -61,18 +61,14 @@ void loop()
           sensor1 = analogRead(analogPin1);
           sensor2 = analogRead(analogPin2);
           
-          client.print('dados({ \'sensor1\' : ');
+          client.print("dados({ sensor1 : ");
           client.print(sensor1);
-          client.print(' , \'sensor2\' :  ');
+          client.print(", sensor2 :  ");
           client.print(sensor2);
-          client.print(' }) ');
+          client.print(" }) ");
           
-          Serial.print('dados({ \'sensor1\' : ');
-          Serial.print(sensor1);
-          Serial.print(' , \'sensor2\' :  ');
-          Serial.print(sensor2);
-          Serial.print(' }) '); 
-          
+         
+          client.stop();
         }
         if(c == '\n') { continua = true; }
         else if (c != '\r') { continua = false; }

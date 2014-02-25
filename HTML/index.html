@@ -4,42 +4,92 @@
 		<title>Arduino com AJAX</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+		<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>-->
+		<script src="js/jquery.js"></script>
+
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+		<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		
+
+		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+<style type="text/css">
+	.clean { padding: 0; margin: 0;}
+
+</style>
+
 	</head>
 
 <body>
 
-<div>
-	<h1>Arduino com AJAX</h1>
-	<p>
-		Lendo dois sensores no arduino. confira o codigo no github: <a href="https://github.com/rogerin/ArduinoComAjax">rogerin</a> <br/>
-		Projeto sem uma boa interface grafica, pois não é o foco dessa demonstração.
-	</p>
-	<p>
-		Status: <span id="status">...</span>
-	</p>
-	<p>
-		<h2>Sensor 1</h2>
-		Valor: <strong><span id="sensor1"></span></strong>
-	</p>
-	<p>
-		<h2>Sensor 2</h2>
-		Valor: <strong><span id="sensor2"></span></strong>
-	</p>
+<div class="container">
+	<div class="row">
+		
+		<div class="page-header">
+		  <h1>Arduino com AJAX <small>Desenvolvido por <a href="http://www.twitter.com/rogerin">Rogerio Alencar Filho</a></small></h1>
+		</div>
+
+	</div>
+	<div class="row">
+		<div class="col-md-3 well">
+			
+			<p>
+				Lendo dois sensores no arduino. confira o codigo no github: <a href="https://github.com/rogerin/ArduinoComAjax">rogerin</a> <br/>
+				Projeto sem uma boa interface grafica, pois não é o foco dessa demonstração.
+			</p>
+			<p>
+				Status: <span id="status" class="label"></span>
+			</p>
+			<p>
+				<h3>Sensor 1</h3>
+				Valor: <strong><span id="sensor1" ></span></strong>
+			</p>
+			<p>
+				<h3>Sensor 2</h3>
+				Valor: <strong><span id="sensor2"></span></strong>
+			</p>
+
+			
+		</div>
+
+		<div class="col-md-9">
+			<div class="clean" id="chart_div" style="width: 100%; height: 500px;"></div>
+		</div>
+	</div>
+
+
+	<div class="row">
+		<p>Github: <a href="https://github.com/rogerin/ArduinoComAjax">rogerin</a> </p>
+	</div>
+
+
 
 </div>
 
 <script type="text/javascript">
 
-//var url = 'http://192.168.1.100:3000';
-var url = '127.0.0.1';
+//var url = 'http://177.177.165.14:50';
+var url = 'http://192.168.1.100:1000';
 
 
+	  google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+        var rowArray = [[1,10,20],[2,49,644]];
+		var data; 
+		var chart;
+		var options = {
+          title: 'Dados dos Sensores ArduinoComAjax',
+          curveType: 'function'
+        };
+
+      
 $(document).ready(function(){
-
-	// Faz a primeira requisição quando a página é carregada
-	fazerRequisicao(); 
+     var i = 0; 
 	function fazerRequisicao(){
+		
+		$('#status').removeClass('label-success').addClass('label-warning');
 		$('#status').text("Enviando Requisição...");
     	$.ajax({
 		    url: url,
@@ -49,21 +99,68 @@ $(document).ready(function(){
 		    jsonp: false,
 		    jsonpCallback: 'dados', // IMPORTANTE
 		    success: function(data,status,xhr) {
+				$('#status').removeClass('label-warning').addClass('label-success')
 				$('#status').text("Requisição Recebida!");
 				$('#sensor1').text(data.sensor1);
 				$('#sensor2').text(data.sensor2);
+				i++;
+				setGrafico(i,data.sensor1,data.sensor2);
 				console.log(data);
 		    }
 		  });
         return false;
     }
 
-    // A cada 1000 (1 segundo), faça uma nova requisição.
-    setInterval(fazerRequisicao, 1000);
-  	// Acredito que 3000 (3 segundos) ou mais seja o ideal.
- 	
+    // A cada 1000 milis (1 segundo), faça uma nova requisição.
+    setInterval(fazerRequisicao, 500);
+  	// Acredito que 3000 (3 segundos) ou mais seja o ideal para um serviço online.
+  	// Caso use local host, arrisco colocar ate 400 milis, você tera uma boa resposta. 
+
 });
 
+      function drawChart() {
+  		data = new google.visualization.DataTable();
+		data.addColumn('number', 'Registro'); // Implicit domain column.
+		data.addColumn('number', 'Sensor1'); // Implicit data column.
+		data.addColumn('number', 'Sensor2'); // Implicit data column.
+		data.addRow();
+      }
+
+      function setGrafico(i, sensor1,sensor2){
+		data.addRow([i,sensor1,sensor2]);
+        chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+        return false;
+      }
+  
 </script>
+
+
 </body>
 </html>
+
+
+
+
+
+
+
+
+<!--
+<?php
+    //Criando a url para o aquivo json
+    $jsonurl = "http://search.twitter.com/trends.json";
+
+    //Retorna o conteudo do arquivo em formato de string
+    $json = file_get_contents($jsonurl,0,null,null);
+
+    //Decodificando a string e criando o json
+    $json_output = json_decode($json);
+   
+    //Loop para percorrer o json capturando os dados
+    foreach ( $json_output->trends as $trend )
+    {
+        echo '<a href="'.$trend->url.'" target="_blank">'.$trend->name.'</a><br />';
+    }
+?>
+	-->
