@@ -4,33 +4,23 @@
 		<title>Arduino com AJAX</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-
 		<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>-->
 		<script src="js/jquery.js"></script>
-
 		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
 		<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-		
-
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
-<style type="text/css">
-	.clean { padding: 0; margin: 0;}
-
-</style>
-
+		<style type="text/css">
+			.clean { padding: 0; margin: 0;}
+		</style>
 	</head>
-
 <body>
-
 <div class="container">
-	<div class="row">
-		
+	<div class="row">	
 		<div class="page-header">
 		  <h1>Arduino com AJAX <small>Desenvolvido por <a href="http://www.twitter.com/rogerin">Rogerio Alencar Filho</a></small></h1>
 		</div>
-
 	</div>
 	<div class="row">
 		<div class="col-md-3 well">
@@ -112,7 +102,7 @@ $(document).ready(function(){
     }
 
     // A cada 1000 milis (1 segundo), faça uma nova requisição.
-    setInterval(fazerRequisicao, 500);
+    setInterval(fazerRequisicao, 300);
   	// Acredito que 3000 (3 segundos) ou mais seja o ideal para um serviço online.
   	// Caso use local host, arrisco colocar ate 400 milis, você tera uma boa resposta. 
 
