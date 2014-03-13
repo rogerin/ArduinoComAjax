@@ -26,6 +26,10 @@ const int analogPin2 = A1;
 int sensor1 = 0;
 int sensor2 = 0;
 
+int LUZ1 = 2;
+int LUZ2 = 3;
+
+
 void setup()
 {
   Serial.begin(9600);
@@ -34,6 +38,13 @@ void setup()
   Serial.println("Server ativo no IP: ");
   Serial.print(Ethernet.localIP());
   server.begin();
+  
+  pinMode(LUZ1, OUTPUT);
+  pinMode(LUZ2, OUTPUT);
+  digitalWrite(LUZ1, HIGH);
+  digitalWrite(LUZ2, HIGH);
+  
+  
   
 }
 void loop()
@@ -56,19 +67,40 @@ void loop()
           // IMPORTANTE, ISSO FAZ O ARDUINO RECEBER REQUISIÇÃO AJAX DE OUTRO SERVIDOR E NÃO APENAS LOCAL.
           client.println("Content-Type: text/javascript");
           client.println("Access-Control-Allow-Origin: *");
-          client.println();
-          
-          sensor1 = analogRead(analogPin1);
-          sensor2 = analogRead(analogPin2);
-          
-          client.print("dados({ sensor1 : ");
-          client.print(sensor1);
-          client.print(", sensor2 :  ");
-          client.print(sensor2);
-          client.print(" }) ");
-          
+          client.println();          
          
-          client.stop();
+          int iniciofrente = linha.indexOf("?");
+                
+          if(iniciofrente>-1){     //verifica se o comando veio
+            iniciofrente     = iniciofrente+6; //pega o caractere seguinte
+            int fimfrente    = iniciofrente+3; //esse comando espero 3 caracteres
+            String acao    = linha.substring(iniciofrente,fimfrente);//recupero o valor do comando
+            
+ 
+            if      ( acao == "001"){ digitalWrite(LUZ1, LOW); } 
+            else if ( acao == "002"){ digitalWrite(LUZ1, HIGH);} 
+            
+            else if ( acao == "003"){ digitalWrite(LUZ2, LOW); }
+            else if ( acao == "004"){ digitalWrite(LUZ2, HIGH); }
+            else {}
+            
+            sensor1 = analogRead(analogPin1);
+            sensor2 = analogRead(analogPin2);
+            
+            client.print("dados({ sensor1 : ");
+            client.print(sensor1);
+            client.print(", sensor2 :  ");
+            client.print(sensor2);
+            client.print(",");
+            client.print(" LUZ1 : ");
+            client.print(digitalRead(LUZ1));
+            client.print(",");
+            client.print(" LUZ2 : ");
+            client.print(digitalRead(LUZ2));
+            client.print("})");
+            
+         }          
+          break;
         }
         if(c == '\n') { continua = true; }
         else if (c != '\r') { continua = false; }
