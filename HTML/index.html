@@ -5,6 +5,7 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<script src="js/jquery.js"></script>
+		<script src="js/arduino-response.js"></script>
 		<link rel="stylesheet" href="css/bootstrap.min.css">
 		<link rel="stylesheet" href="css/bootstrap-theme.min.css">
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -80,22 +81,40 @@ $(document).ready(function(){
         var valor = $(this).attr('id');
         enviaDados(valor);
     });
+
+	function respostaArduino(response) {
+		try {
+			return parseArduinoResponse(response);
+		} catch (error) {
+			$('#status').removeClass('label-success label-warning').addClass('label-danger');
+			$('#status').text('Resposta inválida do Arduino');
+			return null;
+		}
+	}
+
+	function falhaComunicacao() {
+		$('#status').removeClass('label-success label-warning').addClass('label-danger');
+		$('#status').text('Falha na comunicação com o Arduino');
+	}
 	
 	function enviaDados(dado){		
     	$.ajax({
 		    url: url,
 		    data: { 'acao': dado},
-		    dataType: 'jsonp',
+		    dataType: 'text',
 		    crossDomain: true,
+		    cache: false,
 		    jsonp: false,
-		    jsonpCallback: 'dados',
-		    success: function(data,status,xhr) {
+		    success: function(response) {
+				var data = respostaArduino(response);
+				if (!data) { return; }
 				// posso ler dados e retoranar na pagina para avisar se a luz ta ligada ou desligada.
 				console.log(data.LUZ1);
 				console.log(data.LUZ2);
 				$('#resultLUZ1').text(statusReturn(data.LUZ1)); 
 				$('#resultLUZ2').text(statusReturn(data.LUZ2));
-		    }
+		    },
+		    error: falhaComunicacao
 		  });
         return false;
     }
@@ -112,17 +131,19 @@ $(document).ready(function(){
 
     var i = 0;
 	function fazerRequisicao(){
-		$('#status').removeClass('label-success').addClass('label-warning');
+		$('#status').removeClass('label-success label-danger').addClass('label-warning');
 		$('#status').text("Enviando Requisição...");
     	$.ajax({
 		    url: url,
-		    data: { '': ''}, // usaremos em proximas versões
-		    dataType: 'jsonp', // IMPORTANTE
-		    crossDomain: true, // IMPORTANTE
+		    data: { 'acao': '000' }, // comando sem efeito; o Arduino lê os 3 caracteres após ?acao=
+		    dataType: 'text', // não execute a resposta JSONP como JavaScript
+		    crossDomain: true,
+		    cache: false,
 		    jsonp: false,
-		    jsonpCallback: 'dados', // IMPORTANTE
-		    success: function(data,status,xhr) {
-				$('#status').removeClass('label-warning').addClass('label-success')
+		    success: function(response) {
+				var data = respostaArduino(response);
+				if (!data) { return; }
+				$('#status').removeClass('label-warning label-danger').addClass('label-success')
 				$('#status').text("Requisição Recebida!");
 				$('#sensor1').text(data.sensor1);
 				$('#sensor2').text(data.sensor2);
@@ -131,7 +152,8 @@ $(document).ready(function(){
 				i++;
 				setGrafico(i,data.sensor1,data.sensor2);
 				console.log(data);
-		    }
+		    },
+		    error: falhaComunicacao
 		  });
         return false;
     }
